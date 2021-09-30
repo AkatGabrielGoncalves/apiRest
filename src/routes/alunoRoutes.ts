@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import alunoController from '../controllers/AlunoController';
 
-const alunoRouter = new Router();
+const alunoRouter = Router();
 
 alunoRouter.get('/', alunoController.index);
 

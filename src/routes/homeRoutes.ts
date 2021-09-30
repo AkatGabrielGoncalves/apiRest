@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import homeController from '../controllers/HomeController';
 
-const homeRouter = new Router();
+const homeRouter = Router();
 
 homeRouter.get('/', homeController.index);
 

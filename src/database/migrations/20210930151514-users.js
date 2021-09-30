@@ -1,6 +1,6 @@
 module.exports = {
   up: async (query, DataTypes) => {
-    await query.createTable('alunos', {
+    await query.createTable('users', {
       id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -11,24 +11,13 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      sobrenome: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
-      idade: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      peso: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-      },
-      altura: {
-        type: DataTypes.FLOAT,
+      password: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
       created_at: {
@@ -43,6 +32,6 @@ module.exports = {
   },
 
   down: async (query) => {
-    await query.dropTable('alunos');
+    await query.dropTable('users');
   },
 };

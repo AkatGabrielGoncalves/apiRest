@@ -1,7 +1,9 @@
+import express from 'express';
 import Database from '../database';
+import Controller from './interfaces/Controller';
 
-class AlunoController {
-  async index(req, res) {
+class AlunoController implements Controller {
+  index = async (req: express.Request, res: express.Response) => {
     const novoAluno = await Database.models.Aluno.create({
       nome: 'Gabriel',
       sobrenome: 'hmm',
@@ -11,7 +13,7 @@ class AlunoController {
       altura: 2.5,
     });
     res.json(novoAluno);
-  }
+  };
 }
 
 export default new AlunoController();
