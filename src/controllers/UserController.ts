@@ -1,9 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../database/models/User';
-import Controller from './interfaces/Controller';
+import IController from './interfaces/IController';
 
-class UserController implements Controller {
+class UserController implements IController {
   getAll = async (req: express.Request, res: express.Response) => {
     const { page, perPage } = req.body;
 
@@ -17,7 +17,7 @@ class UserController implements Controller {
 
     if (!users) return res.status(404).json({ error: 'Não há usuários.' });
 
-    return res.json(users);
+    return res.status(200).json(users);
   };
 
   getOne = async (req: express.Request, res: express.Response) => {

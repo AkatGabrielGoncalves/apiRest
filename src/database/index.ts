@@ -1,7 +1,7 @@
 import { Dialect, Model, ModelCtor, Sequelize } from 'sequelize';
 import database from '../config/database';
-import Aluno, { AlunoAttributes } from './models/Aluno';
-import User, { UserAttributes } from './models/User';
+import Aluno, { IAlunoAttributes } from './models/Aluno';
+import User, { IUserAttributes } from './models/User';
 
 export interface DatabaseConfigAttributes {
   dialect: Dialect;
@@ -20,15 +20,15 @@ export interface DatabaseConfigAttributes {
   timezone: string;
 }
 
-export type IModels = {
-  Aluno: ModelCtor<Model<AlunoAttributes>>;
-  User: ModelCtor<Model<UserAttributes>>;
+export type TModels = {
+  Aluno: ModelCtor<Model<IAlunoAttributes>>;
+  User: ModelCtor<Model<IUserAttributes>>;
 };
 
 class Database extends Sequelize {
   baseModels: (typeof Aluno | typeof User)[];
 
-  models!: IModels;
+  models!: TModels;
 
   constructor() {
     super(database as DatabaseConfigAttributes);

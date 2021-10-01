@@ -1,12 +1,17 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import alunoController from '../controllers/AlunoController';
 
-const alunoRouter = Router();
+class AlunoRouter {
+  router: express.Router;
 
-alunoRouter.get('/', alunoController.getAll);
-alunoRouter.get('/:id', alunoController.getOne);
-alunoRouter.post('/create', alunoController.create);
-alunoRouter.delete('/delete/:id', alunoController.delete);
-alunoRouter.put('/update/:id', alunoController.update);
+  constructor() {
+    this.router = Router();
+    this.router.get('/', alunoController.getAll);
+    this.router.get('/:id', alunoController.getOne);
+    this.router.post('/create', alunoController.create);
+    this.router.delete('/delete/:id', alunoController.delete);
+    this.router.put('/update/:id', alunoController.update);
+  }
+}
 
-export default alunoRouter;
+export default new AlunoRouter().router;

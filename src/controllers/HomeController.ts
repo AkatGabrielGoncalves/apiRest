@@ -1,12 +1,8 @@
 import express from 'express';
-import Controller from './interfaces/Controller';
+import IController from './interfaces/IController';
 
-class HomeController implements Controller {
-  getAll = async (req: express.Request, res: express.Response) => {
-    res.json({
-      ola: 'mundo',
-    });
-  };
+class HomeController implements IController {
+  getAll = async (req: express.Request, res: express.Response) => {};
 
   getOne = async (req: express.Request, res: express.Response) => {};
 

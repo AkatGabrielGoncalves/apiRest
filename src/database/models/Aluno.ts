@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
-export interface AlunoAttributes {
+export interface IAlunoAttributes {
   id?: number;
   nome: string;
   sobrenome: string;
@@ -11,8 +11,8 @@ export interface AlunoAttributes {
 }
 
 export default class Aluno
-  extends Model<AlunoAttributes>
-  implements AlunoAttributes
+  extends Model<IAlunoAttributes>
+  implements IAlunoAttributes
 {
   public id!: number;
 

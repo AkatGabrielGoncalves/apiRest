@@ -1,7 +1,7 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import bcrypt from 'bcrypt';
 
-export interface UserAttributes {
+export interface IUserAttributes {
   id?: number;
   nome: string;
   email: string;
@@ -9,7 +9,7 @@ export interface UserAttributes {
   tempPassword: string;
 }
 
-export default class User extends Model<UserAttributes> implements UserAttributes {
+export default class User extends Model<IUserAttributes> implements IUserAttributes {
   public id!: number;
 
   public nome!: string;
