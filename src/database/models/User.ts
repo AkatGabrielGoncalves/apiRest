@@ -36,7 +36,10 @@ export default class User extends Model<UserAttributes> implements UserAttribute
         email: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true,
+          unique: {
+            name: 'users.email',
+            msg: 'Email já cadastrado.',
+          },
           validate: {
             len: {
               args: [6, 255],
@@ -70,8 +73,10 @@ export default class User extends Model<UserAttributes> implements UserAttribute
     );
 
     this.addHook('beforeSave', async (user: User) => {
-      // eslint-disable-next-line no-param-reassign
-      user.password = await bcrypt.hash(user.tempPassword, 11);
+      if (user.tempPassword) {
+        // eslint-disable-next-line no-param-reassign
+        user.password = await bcrypt.hash(user.tempPassword, 11);
+      }
     });
   };
 }

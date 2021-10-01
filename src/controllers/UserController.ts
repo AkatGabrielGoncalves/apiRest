@@ -1,22 +1,41 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import User from '../database/models/User';
 import Controller from './interfaces/Controller';
 
-class AlunoController implements Controller {
+class UserController implements Controller {
   getAll = async (req: express.Request, res: express.Response) => {
     const { page, perPage } = req.body;
 
-    const user = await User.findAll({
+    const users = await User.findAll({
       offset: page * perPage,
       limit: perPage,
       attributes: {
         exclude: ['password'],
       },
     });
-    res.json(user);
+
+    if (!users) return res.status(404).json({ error: 'Não há usuários.' });
+
+    return res.json(users);
   };
 
-  getOne = async (req: express.Request, res: express.Response) => {};
+  getOne = async (req: express.Request, res: express.Response) => {
+    const { id } = req.params;
+
+    try {
+      const user = await User.findOne({
+        where: { id },
+        attributes: { exclude: ['password'] },
+      });
+
+      if (!user) return res.status(404).json({ error: 'Usuário não existe.' });
+
+      return res.status(200).json(user);
+    } catch (err: any) {
+      return res.status(400).json({ error: err.message });
+    }
+  };
 
   create = async (req: express.Request, res: express.Response) => {
     const { nome, email, tempPassword } = req.body;
@@ -27,19 +46,77 @@ class AlunoController implements Controller {
         tempPassword,
       });
 
-      res.status(200).json(user);
-    } catch (e: any) {
-      if (e.original.errno === 1062) {
-        res.status(400).json({ error: 'Email já existe.' });
-      } else {
-        res.status(400).json({ error: e.message });
+      return res
+        .status(200)
+        .json({ id: user.id, nome: user.nome, email: user.email });
+    } catch (err: any) {
+      if (err.errors[0]) {
+        return res.status(400).json({
+          error: err.errors.map((e: any) => e.message),
+        });
       }
+      return res.status(400).json({ error: err.message });
     }
   };
 
-  delete = async (req: express.Request, res: express.Response) => {};
+  delete = async (req: express.Request, res: express.Response) => {
+    const { id } = req.params;
 
-  update = async (req: express.Request, res: express.Response) => {};
+    try {
+      const user = await User.findOne({
+        where: { id },
+        attributes: { exclude: ['password'] },
+      });
+
+      if (!user) return res.status(404).json({ error: 'Usuário não existe.' });
+
+      await user.destroy();
+
+      return res.status(200).json(user);
+    } catch (err: any) {
+      return res.status(400).json({ error: err.message });
+    }
+  };
+
+  update = async (req: express.Request, res: express.Response) => {
+    const { id } = req.params;
+    const { nome, email, tempPassword } = req.body;
+
+    try {
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) return res.status(404).json({ error: 'Usuário não existe.' });
+
+      const wasNameModified = nome !== user.nome;
+      const wasEmailModified = email !== user.email;
+      const wasPasswordModified = !bcrypt.compareSync(tempPassword, user.password);
+
+      if (!wasNameModified && !wasEmailModified && !wasPasswordModified)
+        return res
+          .status(200)
+          .json({ id: user.id, nome: user.nome, email: user.email, updated: false });
+
+      const updatedAttributes = {
+        nome: wasNameModified ? nome : user.nome,
+        email: wasEmailModified ? email : user.email,
+      };
+
+      await user.update({
+        ...updatedAttributes,
+        password: wasPasswordModified
+          ? bcrypt.hashSync(tempPassword, 11)
+          : user.password,
+      });
+
+      return res
+        .status(200)
+        .json({ id: user.id, ...updatedAttributes, updated: true });
+    } catch (err: any) {
+      return res.status(400).json({ error: err.message });
+    }
+  };
 }
 
-export default new AlunoController();
+export default new UserController();
