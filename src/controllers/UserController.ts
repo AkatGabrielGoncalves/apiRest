@@ -1,16 +1,28 @@
 import express from 'express';
-import Database from '../database';
+import User from '../database/models/User';
 import Controller from './interfaces/Controller';
 
 class AlunoController implements Controller {
-  index = async (req: express.Request, res: express.Response) => {
-    const user = await Database.models.User.create({
-      nome: 'Gabriel',
-      email: 'gabriel@gabriel.com',
-      tempPassword: 'teste123',
+  getAll = async (req: express.Request, res: express.Response) => {
+    const { page, perPage } = req.body;
+
+    const user = await User.findAll({
+      offset: page * perPage,
+      limit: perPage,
+      attributes: {
+        exclude: ['password'],
+      },
     });
     res.json(user);
   };
+
+  getOne = async (req: express.Request, res: express.Response) => {};
+
+  create = async (req: express.Request, res: express.Response) => {};
+
+  delete = async (req: express.Request, res: express.Response) => {};
+
+  update = async (req: express.Request, res: express.Response) => {};
 }
 
 export default new AlunoController();

@@ -2,16 +2,20 @@
 require('dotenv').config();
 
 import express from 'express';
+import Database from './database';
 
 import homeRouter from './routes/homeRoutes';
 import alunoRouter from './routes/alunoRoutes';
 import userRouter from './routes/userRoutes';
 
 class App {
-  app: express.Application;
+  public app: express.Application;
+
+  db: typeof Database;
 
   constructor() {
     this.app = express();
+    this.db = Database;
     this.middlewares();
     this.routes();
   }
@@ -22,8 +26,8 @@ class App {
   };
 
   private routes = () => {
-    // this.use(homeRouter);
-    this.app.use(userRouter);
+    this.app.use('/aluno/', alunoRouter);
+    this.app.use('/user/', userRouter);
   };
 }
 
