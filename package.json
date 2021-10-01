@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev -T src/server.ts"
+    "dev": "ts-node-dev --inspect -T src/server.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

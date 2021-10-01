@@ -42,6 +42,7 @@ export default class Aluno
         email: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: true,
         },
         idade: {
           type: DataTypes.INTEGER,

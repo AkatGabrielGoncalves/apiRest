@@ -18,7 +18,24 @@ class AlunoController implements Controller {
 
   getOne = async (req: express.Request, res: express.Response) => {};
 
-  create = async (req: express.Request, res: express.Response) => {};
+  create = async (req: express.Request, res: express.Response) => {
+    const { nome, email, tempPassword } = req.body;
+    try {
+      const user = await User.create({
+        nome,
+        email,
+        tempPassword,
+      });
+
+      res.status(200).json(user);
+    } catch (e: any) {
+      if (e.original.errno === 1062) {
+        res.status(400).json({ error: 'Email já existe.' });
+      } else {
+        res.status(400).json({ error: e.message });
+      }
+    }
+  };
 
   delete = async (req: express.Request, res: express.Response) => {};
 

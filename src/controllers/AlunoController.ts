@@ -1,5 +1,4 @@
 import express from 'express';
-import { password } from '../config/database';
 import Aluno from '../database/models/Aluno';
 import Controller from './interfaces/Controller';
 
@@ -17,7 +16,27 @@ class AlunoController implements Controller {
 
   getOne = async (req: express.Request, res: express.Response) => {};
 
-  create = async (req: express.Request, res: express.Response) => {};
+  create = async (req: express.Request, res: express.Response) => {
+    const { nome, sobrenome, email, idade, altura, peso } = req.body;
+    try {
+      const user = await Aluno.create({
+        nome,
+        sobrenome,
+        email,
+        idade,
+        altura,
+        peso,
+      });
+
+      res.status(200).json(user);
+    } catch (e: any) {
+      if (e.original.errno === 1062) {
+        res.status(400).json({ error: 'Email já existe.' });
+      } else {
+        res.status(400).json({ error: e.message });
+      }
+    }
+  };
 
   delete = async (req: express.Request, res: express.Response) => {};
 
