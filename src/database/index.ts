@@ -1,4 +1,10 @@
-import { Dialect, Model, ModelCtor, Sequelize } from 'sequelize';
+import {
+  ConnectionRefusedError,
+  Dialect,
+  Model,
+  ModelCtor,
+  Sequelize,
+} from 'sequelize';
 import database from '../config/database';
 import Aluno, { IAlunoAttributes } from './models/Aluno';
 import User, { IUserAttributes } from './models/User';
@@ -32,6 +38,7 @@ class Database extends Sequelize {
 
   constructor() {
     super(database as DatabaseConfigAttributes);
+    this.verifyConnection();
     this.baseModels = [Aluno, User];
     this.initModels();
   }
@@ -40,6 +47,14 @@ class Database extends Sequelize {
     this.baseModels.forEach((model) => {
       model.initialize(this);
     });
+  };
+
+  private verifyConnection = async () => {
+    try {
+      await this.authenticate();
+    } catch (e: any) {
+      console.log(`DATABASE FAILED TO ESTABLISH A CONNECTION:`, e.original);
+    }
   };
 }
 

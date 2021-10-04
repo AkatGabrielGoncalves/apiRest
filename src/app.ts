@@ -4,9 +4,10 @@ require('dotenv').config();
 import express from 'express';
 import Database from './database';
 
-import homeRouter from './routes/homeRoutes';
-import alunoRouter from './routes/alunoRoutes';
-import userRouter from './routes/userRoutes';
+import homeRouter from './routes/HomeRouter';
+import alunoRouter from './routes/AlunoRouter';
+import userRouter from './routes/UserRouter';
+import authRouter from './routes/AuthRouter';
 
 class App {
   public app: express.Application;
@@ -26,6 +27,7 @@ class App {
   };
 
   private routes = () => {
+    this.app.use('/auth', authRouter);
     this.app.use('/aluno/', alunoRouter);
     this.app.use('/user/', userRouter);
   };

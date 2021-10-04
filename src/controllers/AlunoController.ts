@@ -46,7 +46,7 @@ class AlunoController implements IController {
 
       return res.status(200).json(aluno);
     } catch (err: any) {
-      if (err.errors[0]) {
+      if (err.errors) {
         return res.status(400).json({
           error: err.errors.map((e: any) => e.message),
         });

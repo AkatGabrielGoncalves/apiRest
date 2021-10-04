@@ -1,4 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
+import { dialect } from '../../config/database';
 
 export interface IAlunoAttributes {
   id?: number;
@@ -42,7 +43,10 @@ export default class Aluno
         email: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true,
+          unique: {
+            name: dialect === 'mysql' ? 'alunos.email' : 'email',
+            msg: 'Email já cadastrado.',
+          },
         },
         idade: {
           type: DataTypes.INTEGER,

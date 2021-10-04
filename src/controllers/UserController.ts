@@ -7,17 +7,24 @@ class UserController implements IController {
   getAll = async (req: express.Request, res: express.Response) => {
     const { page, perPage } = req.body;
 
-    const users = await User.findAll({
-      offset: page * perPage,
-      limit: perPage,
-      attributes: {
-        exclude: ['password'],
-      },
-    });
+    if (typeof perPage !== 'number' || typeof page !== 'number')
+      return res.status(400).json({ error: ['page and perPage are not numbers.'] });
 
-    if (!users) return res.status(404).json({ error: 'Não há usuários.' });
+    try {
+      const users = await User.findAll({
+        offset: page * perPage,
+        limit: perPage,
+        attributes: {
+          exclude: ['password'],
+        },
+      });
 
-    return res.status(200).json(users);
+      if (!users) return res.status(404).json({ error: 'Não há usuários.' });
+
+      return res.status(200).json(users);
+    } catch (err: any) {
+      return this.errorHandler(res, err);
+    }
   };
 
   getOne = async (req: express.Request, res: express.Response) => {
@@ -33,7 +40,7 @@ class UserController implements IController {
 
       return res.status(200).json(user);
     } catch (err: any) {
-      return res.status(400).json({ error: err.message });
+      return this.errorHandler(res, err);
     }
   };
 
@@ -50,12 +57,7 @@ class UserController implements IController {
         .status(200)
         .json({ id: user.id, nome: user.nome, email: user.email });
     } catch (err: any) {
-      if (err.errors[0]) {
-        return res.status(400).json({
-          error: err.errors.map((e: any) => e.message),
-        });
-      }
-      return res.status(400).json({ error: err.message });
+      return this.errorHandler(res, err);
     }
   };
 
@@ -74,7 +76,7 @@ class UserController implements IController {
 
       return res.status(200).json(user);
     } catch (err: any) {
-      return res.status(400).json({ error: err.message });
+      return this.errorHandler(res, err);
     }
   };
 
@@ -114,8 +116,17 @@ class UserController implements IController {
         .status(200)
         .json({ id: user.id, ...updatedAttributes, updated: true });
     } catch (err: any) {
-      return res.status(400).json({ error: err.message });
+      return this.errorHandler(res, err);
     }
+  };
+
+  private errorHandler = (res: express.Response, err: any) => {
+    if (err.errors) {
+      return res.status(400).json({
+        error: err.errors.map((e: any) => e.message),
+      });
+    }
+    return res.status(400).json({ error: err.message });
   };
 }
 
